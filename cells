@@ -1,0 +1,523 @@
+int width = 900;
+int height = 500;
+int scale = 4;  //Width & Height of Squares, must be a divisor of wi
+int wval = width/scale;
+int hval = height/scale;
+int[][] values = new int[wval][hval];
+int[][] valuet = new int[wval][hval];
+color[] jimmies = new color[255];
+int icount = 0;
+int jcount;
+int tx, bx, ty, by, cellval, colval, ran, counter;
+int dcounter = 0;
+int lcounter = 0;
+boolean state = true;
+boolean celon;
+boolean looping = true;
+
+void setup() {
+  size(width, height);
+
+  //initilizing square array
+  randomParticles();
+}
+
+void keyPressed() {
+  //pause
+  if (key == ' ') { 
+    if (looping == true) {
+      looping = false;
+    }
+    else {
+      looping = true;
+    }
+  }
+
+  //clear
+  if (key == 'c') {
+    for (int i = 0; i<width/scale; i++) {
+      for (int j = 0; j<height/scale; j++) {
+        values[i][j] = 0;
+        valuet[i][j] = 0;
+      }
+    }
+    lcounter = 0;
+    dcounter = 0;
+  }
+
+  //pattern
+  if (key == '7') {
+    for (int i = 0; i<width/scale; i++) {
+      for (int j = 0; j<height/scale; j++) {
+        if (counter == 7) {
+          values[i][j] = 1;
+          valuet[i][j] = 1;
+          counter = 0;
+        }
+        else {
+          counter++;
+        }
+      }
+    }
+  }
+
+  //Glider NE
+  if (key == 'w') {
+    int x = mouseX/scale;
+    int y = mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y>hval-3)
+      y-= 2;  
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x+1][y] = 1;
+    valuet[x-1][y] = 1;
+    valuet[x+1][y+1] = 1; 
+    valuet[x][y+2] = 1;
+    values[x+1][y] = 1;
+    values[x-1][y] = 1;
+    values[x+1][y+1] = 1; 
+    values[x][y+2] = 1;
+  }
+  //Glider SE
+  if (key == 's') {
+    int x = mouseX/scale;
+    int y = mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y<2)
+      y+= 2;
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x+1][y] = 1;
+    valuet[x-1][y] = 1;
+    valuet[x+1][y-1] = 1; 
+    valuet[x][y-2] = 1;
+    values[x+1][y] = 1;
+    values[x-1][y] = 1;
+    values[x+1][y-1] = 1; 
+    values[x][y-2] = 1;
+  }  
+  //Glider NW
+  if (key == 'q') {
+    int x = mouseX/scale;
+    int y = mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y>hval-3)
+      y-= 2;  
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x+1][y] = 1;
+    valuet[x-1][y] = 1;
+    valuet[x-1][y+1] = 1; 
+    valuet[x][y+2] = 1;
+    values[x+1][y] = 1;
+    values[x-1][y] = 1;
+    values[x-1][y+1] = 1; 
+    values[x][y+2] = 1;
+  }
+  //Glider SW
+  if (key == 'a') {
+    int x = mouseX/scale;
+    int y = mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y<2)
+      y+= 2;
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x+1][y] = 1;
+    valuet[x-1][y] = 1;
+    valuet[x-1][y-1] = 1; 
+    valuet[x][y-2] = 1;
+    values[x+1][y] = 1;
+    values[x-1][y] = 1;
+    values[x-1][y-1] = 1; 
+    values[x][y-2] = 1;
+  }
+  
+    //R-perntomino(explosion)
+  if (key == 'u') {
+    int x = mouseX/scale;
+    int y = 1 + mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y>hval-3)
+      y-= 2;  
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x][y+1] = 1;
+    valuet[x][y-1] = 1;
+    valuet[x-1][y] = 1; 
+    valuet[x+1][y-1] = 1;
+    values[x][y+1] = 1;
+    values[x][y-1] = 1;
+    values[x-1][y] = 1; 
+    values[x+1][y-1] = 1;
+  }
+  
+  //L-perntomino(explosion)
+  if (key == 'y') {
+    int x = mouseX/scale;
+    int y = 1 + mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y>hval-3)
+      y-= 2;  
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x][y+1] = 1;
+    valuet[x][y-1] = 1;
+    valuet[x-1][y-1] = 1; 
+    valuet[x+1][y] = 1;
+    values[x][y+1] = 1;
+    values[x][y-1] = 1;
+    values[x-1][y-1] = 1; 
+    values[x+1][y] = 1;
+  }
+    
+    //R-perntomino(explosion)
+  if (key == 'j') {
+    int x = mouseX/scale;
+    int y = 1 + mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y>hval-3)
+      y-= 2;  
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x][y+1] = 1;
+    valuet[x][y-1] = 1;
+    valuet[x-1][y] = 1; 
+    valuet[x+1][y+1] = 1;
+    values[x][y+1] = 1;
+    values[x][y-1] = 1;
+    values[x-1][y] = 1; 
+    values[x+1][y+1] = 1;
+  }
+  
+  //L-perntomino(explosion)
+  if (key == 'h') {
+    int x = mouseX/scale;
+    int y = 1 + mouseY/scale;
+    if (x<1)
+      x++;
+    else if (x>wval-2)
+      x--;
+    if (y>hval-3)
+      y-= 2;  
+    valuet[x][y] = 1;
+    values[x][y] = 1;
+    valuet[x][y+1] = 1;
+    valuet[x][y-1] = 1;
+    valuet[x-1][y+1] = 1; 
+    valuet[x+1][y] = 1;
+    values[x][y+1] = 1;
+    values[x][y-1] = 1;
+    values[x-1][y+1] = 1; 
+    values[x+1][y] = 1;
+  }
+  //Large-fill 3
+  if (key == '3') {
+    int x = mouseX/scale;
+    int y = mouseY/scale;
+    if (x<3)
+      x+= 3;
+    else if (x>wval-4)
+      x -= 2; 
+    if(y<3)
+      y+= 3;
+    else if (y>hval-4)
+      y-= 2;  
+    for(int i = -3; i<3; i++){
+      for(int j = -3; j<3; j++){
+        valuet[x+i][y+j] = 1;
+        values[x+i][y+j] = 1;
+      }
+    }
+  }  
+  //Large-fill 4
+  if (key == '4') {
+    int x = mouseX/scale;
+    int y = mouseY/scale;
+    if (x<4)
+      x+= 4;
+    else if (x>wval-5)
+      x -= 3; 
+    if(y<4)
+      y+= 4;
+    else if (y>hval-5)
+      y-= 3;  
+    for(int i = -4; i<4; i++){
+      for(int j = -4; j<4; j++){
+        valuet[x+i][y+j] = 1;
+        values[x+i][y+j] = 1;
+      }
+    }
+  }
+    //Large-fill 5
+  if (key == '5') {
+    int x = mouseX/scale;
+    int y = mouseY/scale;
+    if (x<5)
+      x+= 5;
+    else if (x>wval-6)
+      x -= 4; 
+    if(y<5)
+      y+= 5;
+    else if (y>hval-6)
+      y-= 4;  
+    for(int i = -5; i<5; i++){
+      for(int j = -5; j<5; j++){
+        valuet[x+i][y+j] = 1;
+        values[x+i][y+j] = 1;
+      }
+    }
+  }
+
+  //re-randomize
+  if (key == 'r') {
+    randomParticles();
+  }
+}
+
+//mouse effects
+void mousePressed() {
+  noStroke();
+  int x = mouseX/scale;
+  int y = mouseY/scale;
+  int fx = x*scale;
+  int fy = y*scale;
+  if (state == true) {
+    if (values[x][y] == 0) {
+      valuet[x][y] = 1;
+      values[x][y] = 1;
+    }
+    else {
+      values[x][y] = 0;
+      valuet[x][y] = 0;
+    }
+  }
+  else {
+    if (valuet[x][y] == 0) {
+      valuet[x][y] = 1;
+      values[x][y] = 1;
+    }
+    else {
+      valuet[x][y] = 0;
+      values[x][y] = 0;
+    }
+  }  
+}
+
+void mouseDragged() {
+  noStroke();
+  int x = mouseX/scale;
+  int y = mouseY/scale;
+  int fx = x*scale;
+  int fy = y*scale;
+  if (state == true) {
+    if (values[x][y] == 0) {
+      valuet[x][y] = 1;
+      values[x][y] = 1;
+    }
+    else {
+      values[x][y] = 0;
+      valuet[x][y] = 0;
+    }
+  }
+  else {
+    if (valuet[x][y] == 0) {
+      valuet[x][y] = 1;
+      values[x][y] = 1;
+    }
+    else {
+      valuet[x][y] = 0;
+      values[x][y] = 0;
+    }
+  }  
+}
+
+void draw() {
+  updatefield();
+  print("Deaths:" + dcounter + " Alive:" + lcounter + '\n');
+}
+
+void randomParticles() {
+  //initilizing square array
+  for (int i = 0; i<width/scale; i++) {
+    for (int j = 0; j<height/scale; j++) {
+      ran = (int)random(2);
+      values[i][j] = ran;
+      valuet[i][j] = ran;
+    }
+  }
+}
+
+boolean checkstate(int x, int y, boolean status) {  
+  //creates a torroid check
+  if (x == 0) {
+    bx = wval-1;
+    tx = 1;
+  }
+  else if (x == wval-1) {
+    tx = 0;
+    bx = x-1;
+  }
+  else {
+    tx = x+1;
+    bx = x-1;
+  }
+
+  if (y == 0) {
+    by = hval-1;
+    ty = 1;
+  }
+  else if (y == hval-1) {
+    ty = 0;
+    by = y-1;
+  }
+  else {
+    ty = y+1;
+    by = y-1;
+  }
+
+  cellval = 0;
+  if (status == true) {
+    if (values[bx][y] == 0)
+      cellval++;
+    if (values[tx][y] == 0)
+      cellval++;
+    if (values[x][by] == 0)
+      cellval++;
+    if (values[x][ty] == 0)
+      cellval++;
+    if (values[bx][by] == 0)
+      cellval++;
+    if (values[tx][ty] == 0)
+      cellval++;
+    if (values[bx][ty] == 0)
+      cellval++;
+    if (values[tx][by] == 0)
+      cellval++;
+
+    if (values[x][y] == 0) {
+      celon = false;
+    }
+    else {
+      celon = true;
+    }
+  }
+  else {
+    if (valuet[bx][y] == 0)
+      cellval++;
+    if (valuet[tx][y] == 0)
+      cellval++;
+    if (valuet[x][by] == 0)
+      cellval++;
+    if (valuet[x][ty] == 0)
+      cellval++;
+    if (valuet[bx][by] == 0)
+      cellval++;
+    if (valuet[tx][ty] == 0)
+      cellval++;
+    if (valuet[bx][ty] == 0)
+      cellval++;
+    if (valuet[tx][by] == 0)
+      cellval++;
+
+    if (valuet[x][y] == 0) {
+      celon = false;
+    }
+    else {
+      celon = true;
+    }
+  }
+
+  if (looping == false)
+    return celon;
+
+  //rule test to comfirm or deny
+  if (celon == true) {
+    if (cellval>4 && cellval<7)
+      return true;
+    else {
+      dcounter++;
+      return false;
+    }
+  }
+  else {
+    if (cellval>4 && cellval<6) {
+      lcounter++;
+      return true;
+    }
+    else
+      return false;
+  }
+}
+
+void updatefield() {
+  noStroke();
+  if (state == true) {
+    for (int i = 0; i<width; i = i + scale) {
+      jcount = 0;
+      colval = 0;
+      for (int j = 0; j<height; j = j + scale) {
+        colval++;
+        if (checkstate(icount, jcount, state)==true) {
+          valuet[icount][jcount]++;
+          colval =  valuet[icount][jcount];
+          fill(color(150 - colval, 150 - colval, 150 - colval));
+        }
+        else {
+          valuet[icount][jcount] = 0;
+          fill(color(70-colval, 0, 0));
+        }
+        rect(i, j, scale, scale);  
+        jcount++;
+      }
+      icount++;
+    }
+    state = false;
+  }
+  else {
+    for (int i = 0; i<width; i = i + scale) {
+      jcount = 0;
+      colval = 0;
+      for (int j = 0; j<height; j = j + scale) {
+        colval++;
+        if (checkstate(icount, jcount, state)==true) {
+          values[icount][jcount]++;
+          colval = values[icount][jcount];
+          fill(color(150 - colval, 150 - colval, 150 - colval));
+        }
+        else {
+          values[icount][jcount] = 0;
+          fill(color(70-colval, 0, 0));
+        }
+        rect(i, j, scale, scale);  
+        jcount++;
+      }
+      icount++;
+    }
+    state = true;
+  }
+
+  icount = 0;
+}
